@@ -4,7 +4,7 @@ include 'config.php';
 
 // Vérifier que l'utilisateur est connecté
 if (!isset($_SESSION['id_user'])) {
-    header("Location: login.php");
+    header("Location: home.php");
     exit();
 }
 
@@ -99,11 +99,35 @@ foreach ($cv_list as $cv) {
         'formations' => $formations,
     ];
 }
+// Traitement de la suppression du CV
+if (isset($_POST['delete_cv'])) {
+    $delete_cv_id = $_POST['delete_cv_id'];
+    
+    // Supprimer les expériences et formations associées à ce CV
+    $delete_experiences_query = "DELETE FROM experiences WHERE id_cv = '$delete_cv_id'";
+    mysqli_query($conn, $delete_experiences_query);
+
+    $delete_formations_query = "DELETE FROM formations WHERE id_cv = '$delete_cv_id'";
+    mysqli_query($conn, $delete_formations_query);
+    
+    // Supprimer le CV
+    $delete_cv_query = "DELETE FROM cv WHERE id_cv = '$delete_cv_id'";
+    if (mysqli_query($conn, $delete_cv_query)) {
+        echo "CV supprimé avec succès !";
+        // Rediriger pour rafraîchir la page après la suppression
+        header("Location: dashboard.php");
+        exit();
+    } else {
+        echo "Erreur : " . mysqli_error($conn);
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <title>Tableau de bord</title>
     <link rel="stylesheet" href="style.css">
@@ -116,40 +140,39 @@ foreach ($cv_list as $cv) {
     </script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="#" class="navbar-logo">MyCV</a><br>
-            <ul class="navbar-menu">
-                <li><a href="#" onclick="showSection('create-cv')">Créer CV</a></li>
-                <li><a href="#" onclick="showSection('add-experience')">Ajouter Expérience</a></li>
-                <li><a href="#" onclick="showSection('add-formation')">Ajouter Formation</a></li>
-                <li><a href="#" onclick="showSection('my-cvs')">Mes CV</a></li>
-                <li><a href="logout.php">Déconnexion</a></li>
-            </ul>
-        </div>
-    </nav>
-    <header class="header">
+    <!-- Include the navbar -->
+    <?php include 'navbar.php'; ?>
+    <header class="header"><br>
+    <br><br><br>
         <div class="container">
             <h1>Bienvenue, <?php echo $_SESSION['nom']; ?> 👋</h1>
             <p>Gérez facilement vos CV, expériences et formations.</p>
         </div>
     </header>
-    <main class="container">
+    <main class="container" >
         <!-- Section par défaut : Mes CV -->
 
-        <section id="my-cvs" class="dashboard-section">
-    <h2>Mes CV</h2>
+        <section id="my-cvs" ; class="dashboard-section" >
+        <h2 style="text-align: center;">Mes CV</h2>
 
     <?php if (empty($cv_full_data)) { ?>
         <p>Vous n'avez pas encore créé de CV.</p>
     <?php } else { ?>
         <div class="cv-cards-container">
-            <?php foreach ($cv_full_data as $data) { ?>
+        <?php foreach ($cv_full_data as $data) { ?>
                 <a href="cv_details.php?id_cv=<?php echo $data['cv']['id_cv']; ?>" class="cv-card-link">
                     <div class="cv-card">
                         <div class="cv-card-header">
                             <h3><?php echo htmlspecialchars($data['cv']['titre']); ?></h3>
                             <p class="cv-presentation"><?php echo nl2br(htmlspecialchars($data['cv']['presentation'])); ?></p>
+                        </div>
+
+                        <!-- Footer with delete button -->
+                        <div class="cv-card-footer">
+                            <form method="POST" action="" style="display:inline;">
+                                <input type="hidden" name="delete_cv_id" value="<?php echo $data['cv']['id_cv']; ?>">
+                                <button type="submit" name="delete_cv" class="btn-danger">Supprimer</button>
+                            </form>
                         </div>
                     </div>
                 </a>
@@ -157,6 +180,7 @@ foreach ($cv_list as $cv) {
         </div>
     <?php } ?>
 </section>
+
 
         <!-- Section : Créer un CV -->
         <section id="create-cv" class="dashboard-section" style="display:none;">

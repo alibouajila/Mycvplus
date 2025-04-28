@@ -51,14 +51,7 @@ while ($form = mysqli_fetch_assoc($formations_result)) {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="dashboard.php" class="navbar-logo">MyCV</a>
-            <ul class="navbar-menu">
-                <li><a href="logout.php">Déconnexion</a></li>
-            </ul>
-        </div>
-    </nav>
+<?php include 'navbar.php'; ?>
 
     <header class="header">
         <div class="container">

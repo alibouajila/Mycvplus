@@ -1,10 +1,12 @@
 <?php
 session_start(); // Start the session
 include 'config.php'; // Include database configuration
+
 if (isset($_SESSION['id_user'])) {
     header("Location: dashboard.php");
     exit();
 }
+
 // Check if the login form is submitted
 if (isset($_POST['login'])) {
     $email = $_POST['email'];
@@ -26,10 +28,10 @@ if (isset($_POST['login'])) {
             header("Location: dashboard.php"); // Redirect to the dashboard
             exit();
         } else {
-            echo "Mot de passe incorrect.";
+            echo "<div class='error'>Mot de passe incorrect.</div>";
         }
     } else {
-        echo "Email non trouvé.";
+        echo "<div class='error'>Email non trouvé.</div>";
     }
 }
 ?>
@@ -38,18 +40,25 @@ if (isset($_POST['login'])) {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
+    <link rel="stylesheet" href="login.css">
 </head>
 <body>
-    <h2>Connexion</h2>
-    <form method="POST" action="">
-        <label>Email :</label><br>
-        <input type="email" name="email" required><br><br>
+<?php include 'navbar.php'; ?>
 
-        <label>Mot de passe :</label><br>
-        <input type="password" name="mot_de_passe" required><br><br>
+    <div class="login-container">
+        <h2>Connexion</h2>
+        <form method="POST" action="">
+            <label for="email">Email :</label>
+            <input type="email" name="email" id="email" required placeholder="Entrez votre email">
 
-        <button type="submit" name="login">Se connecter</button>
-    </form>
+            <label for="mot_de_passe">Mot de passe :</label>
+            <input type="password" name="mot_de_passe" id="mot_de_passe" required placeholder="Entrez votre mot de passe">
+
+            <button type="submit" name="login">Se connecter</button>
+        </form>
+        <p>Pas encore inscrit? <a href="register.php">Créer un compte</a></p>
+    </div>
 </body>
 </html>
