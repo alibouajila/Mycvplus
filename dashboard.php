@@ -7,6 +7,11 @@ if (!isset($_SESSION['id_user'])) {
     header("Location: home.php");
     exit();
 }
+if (isset($_SESSION['success_message'])) {
+    $message = $_SESSION['success_message'];
+    echo "<div class='notification show' id='notif'>$message</div>";
+    unset($_SESSION['success_message']);
+}
 
 // Traitement du formulaire de création de CV
 if (isset($_POST['submit_cv'])) {
@@ -156,7 +161,7 @@ if (isset($_POST['delete_cv'])) {
         <h2 style="text-align: center;">Mes CV</h2>
 
     <?php if (empty($cv_full_data)) { ?>
-        <p>Vous n'avez pas encore créé de CV.</p>
+        <p style="text-align: center; margin-top: 100px">Vous n'avez pas encore créé de CV.</p>
     <?php } else { ?>
         <div class="cv-cards-container">
         <?php foreach ($cv_full_data as $data) { ?>
@@ -226,6 +231,16 @@ if (isset($_POST['delete_cv'])) {
             </form>
         </section>
     </main>
+    <script>
+window.addEventListener('DOMContentLoaded', (event) => {
+    const notif = document.getElementById('notif');
+    if (notif) {
+        setTimeout(() => {
+            notif.classList.remove('show');
+        }, 1000); 
+    }
+});
+</script>
 
 </body>
 </html>
