@@ -29,11 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
             header("Location: dashboard.php");
             exit();
         } else {
-            $message = "Mot de passe incorrect.";
+            $message = "Mot de passe incorrect !";
             $message_type = "error";
         }
     } else {
-        $message = "Email non trouvé.";
+        $message = "Email non trouvé !";
         $message_type = "error";
     }
 }
